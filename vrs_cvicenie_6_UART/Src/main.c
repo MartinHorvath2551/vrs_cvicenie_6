@@ -22,6 +22,7 @@
 #include "main.h"
 #include "usart.h"
 #include "gpio.h"
+#include <string.h>
 
 
 void SystemClock_Config(void);
@@ -42,15 +43,30 @@ int main(void)
   MX_USART2_UART_Init();
 
   USART2_RegisterCallback(process_serial_data);
+  char tx_data[6];
 
-  char tx_data = 'a';
+
+
 
   while (1)
   {
-	  LL_USART_TransmitData8(USART2, tx_data++);
-	  tx_data == ('z' + 1) ? tx_data = 'a' : tx_data;
 
-	  LL_mDelay(50);
+	  if((LL_GPIO_ReadInputPort(GPIOB) & (1 << 3)) >> 3)
+	  {
+		  tx_data="ledON";
+	  }
+	  else
+	  {
+		  tx_data="ledOFF";
+	  }
+
+	  for(int i=0;i<6;i++)
+	  {
+		  LL_USART_TransmitData8(USART2, tx_data[i]);
+	  }
+	 // tx_data == ('z' + 1) ? tx_data = 'a' : tx_data;
+
+	  LL_mDelay(60);
   }
 }
 
@@ -92,27 +108,40 @@ void SystemClock_Config(void)
 
 void process_serial_data(uint8_t ch)
 {
-	static uint8_t count = 0;
 
-	if(ch == 'a')
+	static char stringOff[6]= "";
+	static char stringOn[5]= "";
+
+
+	for(int i=0;i<5;i++)
 	{
-		count++;
-
-		if(count >= 3)
-		{
-			if((LL_GPIO_ReadInputPort(GPIOB) & (1 << 3)) >> 3)
-			{
-				LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_3);
-			}
-			else
-			{
-				LL_GPIO_SetOutputPin(GPIOB, LL_GPIO_PIN_3);
-			}
-
-			count = 0;
-			return;
-		}
+		stringOff[i]=stringOff[i+1];
 	}
+
+	stringOff[5]=ch;
+
+	for(int i=0;i<4;i++)
+	{
+		stringOn[i]=stringOn[i+1];
+	}
+
+	stringOn[4]=ch;
+
+//((LL_GPIO_ReadInputPort(GPIOB) & (1 << 3)) >> 3)
+
+	if(strcmp(stringOn, "ledON")==0)
+	{
+		LL_GPIO_SetOutputPin(GPIOB, LL_GPIO_PIN_3);
+	}
+	else if(strcmp(stringOff, "stringOff")==0)
+	{
+
+		LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_3);
+	}
+
+	return;
+
+
 }
 
 
