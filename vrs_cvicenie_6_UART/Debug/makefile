@@ -15,6 +15,12 @@ RM := rm -rf
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
+ifneq ($(strip $(S_DEPS)),)
+-include $(S_DEPS)
+endif
+ifneq ($(strip $(S_UPPER_DEPS)),)
+-include $(S_UPPER_DEPS)
+endif
 ifneq ($(strip $(C_DEPS)),)
 -include $(C_DEPS)
 endif
@@ -40,8 +46,8 @@ vrs_cvicenie_6_UART.bin \
 all: vrs_cvicenie_6_UART.elf secondary-outputs
 
 # Tool invocations
-vrs_cvicenie_6_UART.elf: $(OBJS) $(USER_OBJS) C:\Projects\FEI\vrs_cvicenie_6\vrs_cvicenie_6_UART\STM32F303K8TX_FLASH.ld
-	arm-none-eabi-gcc -o "vrs_cvicenie_6_UART.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Projects\FEI\vrs_cvicenie_6\vrs_cvicenie_6_UART\STM32F303K8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="vrs_cvicenie_6_UART.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+vrs_cvicenie_6_UART.elf: $(OBJS) $(USER_OBJS) D:\GitHub\vrs_cvicenie_6\vrs_cvicenie_6_UART\STM32F303K8TX_FLASH.ld
+	arm-none-eabi-gcc -o "vrs_cvicenie_6_UART.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\GitHub\vrs_cvicenie_6\vrs_cvicenie_6_UART\STM32F303K8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="vrs_cvicenie_6_UART.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
