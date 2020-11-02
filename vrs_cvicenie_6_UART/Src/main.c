@@ -44,7 +44,7 @@ int main(void)
 
   USART2_RegisterCallback(process_serial_data);
 
-  char tx_data[7]="ledOFF";
+  char tx_data[7];
   int i=0;
 
 
@@ -53,17 +53,12 @@ int main(void)
 
 	  if((LL_GPIO_ReadInputPort(GPIOB) & (1 << 3)) >> 3)
 	  {
-		 // tx_data="ledON";
 		  strcpy(tx_data,"ledON");
 	  }
 	  else
 	  {
-		  //tx_data="ledOFF";
 		  strcpy(tx_data,"ledOFF");
 	  }
-
-	  //for(int i=0;i<6;i++)
-	  //{
 
 	  if (tx_data[i]!='\0')
 	  {
@@ -75,11 +70,7 @@ int main(void)
 		  i=0;
 	  }
 
-
-	  //}
-	 // tx_data == ('z' + 1) ? tx_data = 'a' : tx_data;
-
-	  LL_mDelay(60);
+	  LL_mDelay(200);
   }
 }
 
@@ -131,7 +122,7 @@ void process_serial_data(uint8_t ch)
 		stringOff[i]=stringOff[i+1];
 	}
 
-	stringOff[6]=ch;
+	stringOff[5]=ch;
 
 	for(int i=0;i<4;i++)
 	{
@@ -140,20 +131,16 @@ void process_serial_data(uint8_t ch)
 
 	stringOn[4]=ch;
 
-//((LL_GPIO_ReadInputPort(GPIOB) & (1 << 3)) >> 3)
-
 	if(strcmp(stringOn, "ledON")==0)
 	{
 		LL_GPIO_SetOutputPin(GPIOB, LL_GPIO_PIN_3);
 	}
 	if(strcmp(stringOff, "ledOFF")==0)
 	{
-
 		LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_3);
 	}
 
 	return;
-
 
 }
 
